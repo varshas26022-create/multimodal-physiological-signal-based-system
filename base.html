@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Muscle Cramp App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            transition: 0.3s;
+        }
+
+        /* THEMES */
+        body.default {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+        }
+
+        body.dark {
+            background: #121212;
+            color: white;
+        }
+
+        body.light {
+            background: #f4f4f4;
+            color: black;
+        }
+
+        body.purple {
+            background: linear-gradient(135deg, #41295a, #2F0743);
+            color: white;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 220px;
+            height: 100%;
+            padding: 20px;
+        }
+
+        body.default .sidebar,
+        body.dark .sidebar,
+        body.purple .sidebar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        body.light .sidebar {
+            background: #e0e0e0;
+        }
+
+        .sidebar a {
+            display: block;
+            text-decoration: none;
+            margin: 20px 0;
+        }
+
+        body.default .sidebar a,
+        body.dark .sidebar a,
+        body.purple .sidebar a {
+            color: white;
+        }
+
+        body.light .sidebar a {
+            color: black;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 30px;
+        }
+
+        .card {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        body.default .card,
+        body.dark .card,
+        body.purple .card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        body.light .card {
+            background: white;
+        }
+
+        canvas {
+            background: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body class="default">
+
+{% if user %}
+<div class="sidebar">
+    <h2>Welcome {{ user.name }}</h2>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/profile">Profile</a>
+    <a href="/about">About Cramps</a>
+    <a href="/settings">Settings</a>
+    <a href="/logout">Logout</a>
+</div>
+{% endif %}
+
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<script>
+    function applyTheme(theme) {
+        document.body.className = theme;
+        localStorage.setItem("theme", theme);
+    }
+
+    let savedTheme = localStorage.getItem("theme") || "default";
+    document.body.className = savedTheme;
+</script>
+
+</body>
+</html>

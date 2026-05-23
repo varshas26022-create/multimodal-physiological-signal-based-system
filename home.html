@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>AI-Based Muscle Cramp Risk Detection</h1>
+
+<div class="card">
+    <p><strong>EMG:</strong> {{ emg }}</p>
+    <p><strong>GSR:</strong> {{ gsr }}</p>
+    <p><strong>Flex Sensor:</strong> {{ flex }}</p>
+
+    <h2>
+        Risk Status:
+        {% if risk == "HIGH RISK" %}
+            <span style="color:red;">{{ risk }}</span>
+        {% elif risk == "MODERATE RISK" %}
+            <span style="color:orange;">{{ risk }}</span>
+        {% else %}
+            <span style="color:green;">{{ risk }}</span>
+        {% endif %}
+    </h2>
+</div>
+
+<p style="margin-top:20px;">Page refresh to simulate real-time monitoring.</p>
+
+{% endblock %}

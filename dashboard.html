@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Live Sensor Values</h2>
+
+<div class="card">
+    <p>EMG: <span id="emg">--</span></p>
+    <p>GSR: <span id="gsr">--</span></p>
+    <p>Flex: <span id="flex">--</span></p>
+    <h2 id="risk">--</h2>
+</div>
+
+<div class="card">
+    <h3>Risk History</h3>
+    <ul id="history"></ul>
+</div>
+
+<div class="card">
+    <h3>Live Chart</h3>
+    <canvas id="riskChart"></canvas>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Chart Setup
+    const ctx = document.getElementById("riskChart").getContext("2d");
+
+    const chart = new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Risk Level",
+                data: [],
+                borderColor: "cyan",
+                tension: 0.3
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    min: 0,
+                    max: 3,
+                    ticks: {
+                        callback: function(value) {
+                            if (value === 1) return "LOW";
+                            if (value === 2) return "MOD";
+                            if (value === 3) return "HIGH";
+                            return "";
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // 🔊 Safari Safe Beep Sound
+    let audioCtx = null;
+
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playBeep() {
+        if (!audioCtx) return;
+
+        let oscillator = audioCtx.createOscillator();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(1000, audioCtx.currentTime);
+        oscillator.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 0.4);
+    }
+
+    // Unlock sound on first click
+    document.addEventListener("click", function() {
+        initAudio();
+    }, { once: true });
+
+    function fetchData() {
+        fetch("/data")
+        .then(res => res.json())
+        .then(data => {
+
+            document.getElementById("emg").innerText = data.emg;
+            document.getElementById("gsr").innerText = data.gsr;
+            document.getElementById("flex").innerText = data.flex;
+
+            let riskEl = document.getElementById("risk");
+            riskEl.innerText = data.risk;
+
+            if (data.risk === "HIGH RISK") {
+                riskEl.style.color = "red";
+
+                if (!window.alarmPlayed) {
+                    playBeep();
+                    window.alarmPlayed = true;
+                }
+            }
+            else if (data.risk === "MODERATE RISK") {
+                riskEl.style.color = "orange";
+                window.alarmPlayed = false;
+            }
+            else {
+                riskEl.style.color = "green";
+                window.alarmPlayed = false;
+            }
+
+            // Update history list
+            let historyList = document.getElementById("history");
+            historyList.innerHTML = "";
+            data.history.forEach(item => {
+                let li = document.createElement("li");
+                li.innerText = item;
+                historyList.appendChild(li);
+            });
+
+            // Convert risk to numeric for graph
+            chart.data.labels = data.history;
+            chart.data.datasets[0].data = data.history.map(r => {
+                if (r === "LOW RISK") return 1;
+                if (r === "MODERATE RISK") return 2;
+                if (r === "HIGH RISK") return 3;
+            });
+
+            chart.update();
+        });
+    }
+
+    setInterval(fetchData, 2000);
+    fetchData();
+</script>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Theme Settings</h2>
+
+<div class="card">
+    <select onchange="applyTheme(this.value)">
+        <option value="default">Ocean</option>
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="purple">Purple</option>
+    </select>
+</div>
+
+{% endblock %}
