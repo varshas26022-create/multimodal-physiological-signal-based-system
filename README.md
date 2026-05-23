@@ -50,7 +50,7 @@ To develop a smart wearable healthcare system capable of identifying neuromuscul
 
 ## 📷 Project Status
 
-🚧 Currently under development
+🚧 Completed
 
 ---
 
