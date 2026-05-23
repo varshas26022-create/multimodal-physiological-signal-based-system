@@ -33,12 +33,14 @@ with Arduino-based acquisition for real-time monitoring and analysis.
 ## 🛠️ Technologies Used
 
 - Python
+- HTML
 - Arduino
 - EMG Sensor
 - GSR Sensor
 - Flex Sensor
 - Machine Learning
 - Biomedical Signal Processing
+
 
 ---
 
